@@ -44,7 +44,7 @@ public class CartService : ICartService
 
         var cart = await GetOrCreateCartAsync(userId);
 
-        var item = new CartItem(cart.Id, product.Id, dto.Quantity, product.Price);
+        var item = new CartItem(cart.Id, product.Id, dto.Quantity);
         cart.AddItem(item);
 
         await _cartRepository.UpdateAsync(cart);

@@ -1,5 +1,6 @@
 ﻿using Ecommerce.Domain.ValueObjects;
 using ECommerceApi.Domain.Entities;
+using ECommerceApi.Domain.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +22,7 @@ namespace Ecommerce.Domain.Entities
         public Guid CategoryId { get; private set; }
         public DateTime CreatedAt { get; private set; }
 
-        // nav props
+        // nav propsq  ........................................................................................................................................................................
         public Category Category { get; private set; }
         public ICollection<Review> Reviews { get; private set; } = new List<Review>();
         public ICollection<OrderItem> OrderItems { get; private set; } = new List<OrderItem>();
@@ -86,7 +87,7 @@ namespace Ecommerce.Domain.Entities
             if (quantity <= 0)
                 throw new ArgumentException("Quantity must be positive.");
             if (quantity > Stock)
-                throw new InvalidOperationException("Insufficient stock.");
+                throw new InsufficientStockException(Name,Stock,quantity);
             Stock -= quantity;
         }
 

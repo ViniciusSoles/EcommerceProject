@@ -15,14 +15,12 @@ public class CartItem
     public Guid CartId { get; private set; }
     public Guid ProductId { get; private set; }
     public int Quantity { get; private set; }
-    public Money UnitPrice { get; private set; }
-
     public Cart Cart { get; private set; }
     public Product Product { get; private set; }
 
     protected CartItem() { }
 
-    public CartItem(Guid cartId, Guid productId, int quantity, Money unitPrice)
+    public CartItem(Guid cartId, Guid productId, int quantity,)
     {
         if (quantity <= 0)
             throw new ArgumentException("Quantity must be positive.");
@@ -41,5 +39,5 @@ public class CartItem
         Quantity = quantity;
     }
 
-    public Money GetSubtotal() => UnitPrice.Multiply(Quantity);
+    public Money GetSubtotal() => Product.Price.Multiply(Quantity);
 }

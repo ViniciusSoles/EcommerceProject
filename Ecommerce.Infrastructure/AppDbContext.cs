@@ -178,18 +178,7 @@ public class AppDbContext : DbContext
             entity.Property(ci => ci.Quantity)
                 .IsRequired();
 
-            entity.OwnsOne(ci => ci.UnitPrice, price =>
-            {
-                price.Property(m => m.Amount)
-                    .HasColumnName("UnitPrice")
-                    .HasColumnType("decimal(18,2)")
-                    .IsRequired();
-
-                price.Property(m => m.Currency)
-                    .HasColumnName("Currency")
-                    .HasMaxLength(3)
-                    .IsRequired();
-            });
+           
         });
     }
 

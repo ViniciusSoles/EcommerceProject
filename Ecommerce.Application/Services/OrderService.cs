@@ -65,17 +65,11 @@ public class OrderService : IOrderService
             ci.ProductId,
             ci.Product.Name,
             ci.Quantity,
-            ci.UnitPrice)).ToList();
+            ci.Product.Price)).ToList();
 
-        Order order;
-        try
-        {
-            order = new Order(userId, address, orderItems);
-        }
-        catch (InvalidOperationException ex)
-        {
-            return Result.Fail(ex.Message);
-        }
+        var order = new Order(userId,address,orderItems);
+        
+
 
         // dá baixa no estoque
         foreach (var cartItem in cart.Items)
@@ -146,14 +140,7 @@ public class OrderService : IOrderService
         if (order is null)
             return Result.Fail("Order not found.");
 
-        try
-        {
             order.UpdateStatus(newStatus);
-        }
-        catch (InvalidOperationException ex)
-        {
-            return Result.Fail(ex.Message);
-        }
 
         await _orderRepository.UpdateAsync(order);
 

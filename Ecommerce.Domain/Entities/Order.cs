@@ -1,6 +1,7 @@
 ﻿using Ecommerce.Domain.Enums;
 using Ecommerce.Domain.ValueObjects;
 using ECommerceApi.Domain.ValueObjects;
+using EcommerceProject;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,7 +53,7 @@ public class Order
     public void Cancel()
     {
         if (Status == OrderStatus.Shipped || Status == OrderStatus.Delivered)
-            throw new InvalidOperationException("Cannot cancel shipped or delivered order.");
+            throw new CannotCancelShippedOrderException();
 
         Status = OrderStatus.Cancelled;
         UpdatedAt = DateTime.UtcNow;
@@ -77,7 +78,7 @@ public class Order
         };
 
         if (!valid)
-            throw new InvalidOperationException(
-                $"Cannot transition from {Status} to {newStatus}.");
+            throw new InvalidOrderStatusException(Status.ToString(),newStatus.ToString());
+            
     }
 }

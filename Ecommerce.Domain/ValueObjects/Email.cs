@@ -14,9 +14,9 @@ namespace Ecommerce.Domain.ValueObjects
         public Email(string value)
         {
             if (string.IsNullOrWhiteSpace(value))
-                throw new ArgumentException("Email cannot be empty.");
+                throw new ArgumentException("Campo Email não pode estar vazio.");
             if (!value.Contains("@"))
-                throw new ArgumentException("Invalid email format.");
+                throw new ArgumentException("E-mail com formato inválido".);
 
             Value = value.ToLower().Trim();
         }

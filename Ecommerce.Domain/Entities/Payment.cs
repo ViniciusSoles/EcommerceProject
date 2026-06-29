@@ -1,6 +1,7 @@
 ﻿using Ecommerce.Domain.Enums;
 using Ecommerce.Domain.ValueObjects;
 using ECommerceApi.Domain.ValueObjects;
+using EcommerceProject;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,7 +38,7 @@ public class Payment
     public void Approve(string transactionId)
     {
         if (Status != PaymentStatus.Pending)
-            throw new InvalidOperationException("Only pending payments can be approved.");
+            throw new InvalidPaymentStatusException("approve",Status.ToString());
 
         Status = PaymentStatus.Approved;
         TransactionId = transactionId;
@@ -47,7 +48,7 @@ public class Payment
     public void Refuse()
     {
         if (Status != PaymentStatus.Pending)
-            throw new InvalidOperationException("Only pending payments can be refused.");
+            throw new InvalidPaymentStatusException("approve",Status.ToString());
 
         Status = PaymentStatus.Refused;
     }
@@ -55,7 +56,7 @@ public class Payment
     public void Refund()
     {
         if (Status != PaymentStatus.Approved)
-            throw new InvalidOperationException("Only approved payments can be refunded.");
+            throw new InvalidPaymentStatusException("approve",Status.ToString());
 
         Status = PaymentStatus.Refunded;
     }
