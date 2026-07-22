@@ -34,13 +34,16 @@ public class CartService : ICartService
         var product = await _productRepository.GetByIdAsync(dto.ProductId);
 
         if (product is null)
-            return Result.Fail("O produto não foi encontrado.");
+            return Result.Fail(
+                new Error("Product not found.").WithMetadata("ErrorCode", "PRODUCT_NOT_FOUND"));
 
         if (!product.IsActive)
-            return Result.Fail("O produto não está disponível.");
+            return Result.Fail(
+                new Error("Product is not available.").WithMetadata("ErrorCode", "PRODUCT_NOT_AVAILABLE"));
 
         if (product.Stock < dto.Quantity)
-            return Result.Fail("Estoque insuficiente.");
+            return Result.Fail(
+                new Error("Insufficient stock.").WithMetadata("ErrorCode", "INSUFFICIENT_STOCK"));
 
         var cart = await GetOrCreateCartAsync(userId);
 
@@ -58,15 +61,18 @@ public class CartService : ICartService
         var cart = await _cartRepository.GetByUserIdAsync(userId);
 
         if (cart is null)
-            return Result.Fail("Carrinho não encontrado.");
+            return Result.Fail(
+                new Error("Cart not found.").WithMetadata("ErrorCode", "CART_NOT_FOUND"));
 
         var item = cart.Items.FirstOrDefault(i => i.Id == cartItemId);
 
         if (item is null)
-            return Result.Fail("Item não encontrado no carrinho.");
+            return Result.Fail(
+                new Error("Item not found in cart.").WithMetadata("ErrorCode", "ITEM_NOT_FOUND"));
 
         if (item.Product.Stock < dto.Quantity)
-            return Result.Fail("Estoque insuficiente.");
+            return Result.Fail(
+                new Error("Insufficient stock.").WithMetadata("ErrorCode", "INSUFFICIENT_STOCK"));
 
         try
         {
@@ -74,7 +80,8 @@ public class CartService : ICartService
         }
         catch (ArgumentException ex)
         {
-            return Result.Fail(ex.Message);
+            return Result.Fail(
+                new Error(ex.Message).WithMetadata("ErrorCode", "INVALID_CART_ITEM"));
         }
 
         await _cartRepository.UpdateAsync(cart);
@@ -87,7 +94,8 @@ public class CartService : ICartService
         var cart = await _cartRepository.GetByUserIdAsync(userId);
 
         if (cart is null)
-            return Result.Fail("Carrinho não encontrado.");
+            return Result.Fail(
+                new Error("Cart not found.").WithMetadata("ErrorCode", "CART_NOT_FOUND"));
 
         try
         {
@@ -95,7 +103,8 @@ public class CartService : ICartService
         }
         catch (InvalidOperationException ex)
         {
-            return Result.Fail(ex.Message);
+            return Result.Fail(
+                new Error(ex.Message).WithMetadata("ErrorCode", "INVALID_CART_ITEM"));
         }
 
         await _cartRepository.UpdateAsync(cart);
@@ -108,7 +117,8 @@ public class CartService : ICartService
         var cart = await _cartRepository.GetByUserIdAsync(userId);
 
         if (cart is null)
-            return Result.Fail("Cart not found.");
+            return Result.Fail(
+                new Error("Cart not found.").WithMetadata("ErrorCode", "CART_NOT_FOUND"));
 
         cart.Clear();
         await _cartRepository.UpdateAsync(cart);
