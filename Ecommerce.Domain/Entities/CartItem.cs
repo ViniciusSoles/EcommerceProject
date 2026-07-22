@@ -20,22 +20,22 @@ public class CartItem
 
     protected CartItem() { }
 
-    public CartItem(Guid cartId, Guid productId, int quantity,)
+    public CartItem(Guid cartId, Guid productId, int quantity)
     {
         if (quantity <= 0)
-            throw new ArgumentException("Quantity must be positive.");
+            throw new ArgumentException("A quantidade deve ser positiva.");
 
         Id = Guid.NewGuid();
         CartId = cartId;
         ProductId = productId;
         Quantity = quantity;
-        UnitPrice = unitPrice;
+        
     }
 
     public void UpdateQuantity(int quantity)
     {
         if (quantity <= 0)
-            throw new ArgumentException("Quantity must be positive.");
+            throw new ArgumentException("A quantidade deve ser positiva.");
         Quantity = quantity;
     }
 

@@ -292,7 +292,7 @@ public class AppDbContext : DbContext
         {
             entity.HasKey(r => r.Id);
 
-            // Value Object Rating — mapeado como int
+            
             entity.Property(r => r.Rating)
                 .HasConversion(
                     rating => rating.Value,

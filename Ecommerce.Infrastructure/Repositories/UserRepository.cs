@@ -1,4 +1,5 @@
 ﻿
+using Ecommerce.Domain.ValueObjects;
 using ECommerceApi.Domain.Entities;
 using ECommerceApi.Domain.Interfaces;
 using ECommerceApi.Infrastructure.Data;
@@ -19,13 +20,13 @@ public class UserRepository : IUserRepository
         await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
 
     public async Task<User?> GetByEmailAsync(string email) =>
-        await _context.Users.FirstOrDefaultAsync(u => u.Email.Value == email.ToLower());
+        await _context.Users.FirstOrDefaultAsync(u => u.Email == new Email(email));
 
     public async Task<User?> GetByRefreshTokenAsync(string refreshToken) =>
         await _context.Users.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
 
     public async Task<bool> EmailExistsAsync(string email) =>
-        await _context.Users.AnyAsync(u => u.Email.Value == email.ToLower());
+        await _context.Users.AnyAsync(u => u.Email == new Email(email));
 
     public async Task AddAsync(User user)
     {

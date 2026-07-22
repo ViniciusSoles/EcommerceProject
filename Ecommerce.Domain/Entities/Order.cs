@@ -29,7 +29,7 @@ public class Order
     public Order(Guid userId, Address shippingAddress, IEnumerable<OrderItem> items)
     {
         if (!items.Any())
-            throw new InvalidOperationException("Order must have at least one item.");
+            throw new InvalidOperationException("O pedido deve ter pelo menos um item.");
 
         Id = Guid.NewGuid();
         UserId = userId;
@@ -78,7 +78,7 @@ public class Order
         };
 
         if (!valid)
-            throw new InvalidOrderStatusException(Status.ToString(),newStatus.ToString());
+            throw new InvalidOrderStatusTransitionException(Status.ToString(),newStatus.ToString());
             
     }
 }

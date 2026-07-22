@@ -29,7 +29,7 @@ public class User
     public User(string name, Email email, string passwordHash, string role = "Customer")
     {
         if (string.IsNullOrWhiteSpace(name))
-            throw new ArgumentException("Name cannot be empty.");
+            throw new ArgumentException("Nome não pode ser vazio.");
 
         Id = Guid.NewGuid();
         Name = name;
@@ -58,7 +58,7 @@ public class User
     public void Update(string name)
     {
         if (string.IsNullOrWhiteSpace(name))
-            throw new ArgumentException("Name cannot be empty.");
+            throw new ArgumentException("Nome não pode ser vazio.");
         Name = name;
     }
 }

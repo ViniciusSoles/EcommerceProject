@@ -32,7 +32,8 @@ public class AuthService : IAuthService
     public async Task<Result> RegisterAsync(RegisterDto dto)
     {
         if (await _repository.EmailExistsAsync(dto.Email))
-            return Result.Fail("Email already registered.");
+            return Result.Fail(
+                new Error("Email já cadastrado.").WithMetadata("ErrorCode", "EMAIL_ALREADY_EXISTS"));
 
         Email email;
         try
@@ -41,7 +42,8 @@ public class AuthService : IAuthService
         }
         catch (ArgumentException ex)
         {
-            return Result.Fail(ex.Message);
+            return Result.Fail(
+                new Error("Credenciais Inválidas").WithMetadata("ErrorCode", "INVALID_CREDENTIALS"));
         }
 
         var passwordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
@@ -57,7 +59,8 @@ public class AuthService : IAuthService
         var user = await _repository.GetByEmailAsync(dto.Email);
 
         if (user is null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
-            return Result.Fail("Invalid credentials.");
+            return Result.Fail(
+              new Error("Credenciais inválidas").WithMetadata("ErrorCode", "INVALID_CREDENTIALS"));
 
         var tokens = await GenerateTokens(user);
         return Result.Ok(tokens);
@@ -69,7 +72,8 @@ public class AuthService : IAuthService
         var user = await _repository.GetByRefreshTokenAsync(refreshHash);
 
         if (user is null || !user.IsRefreshTokenValid(refreshHash))
-            return Result.Fail("Refresh token invalid or expired.");
+            return Result.Fail(
+              new Error("Acesso negado ou expirado.").WithMetadata("ErrorCode", "DENIED_OR_EXPIRED_ACESS"));
 
         var tokens = await GenerateTokens(user);
         return Result.Ok(tokens);
@@ -81,7 +85,8 @@ public class AuthService : IAuthService
         var user = await _repository.GetByRefreshTokenAsync(refreshHash);
 
         if (user is null)
-            return Result.Fail("Invalid refresh token.");
+            return Result.Fail(
+              new Error("Acesso negado ou expirado.").WithMetadata("ErrorCode", "DENIED_OR_EXPIRED_ACESS"));
 
         user.RevokeRefreshToken();
         await _repository.UpdateAsync(user);

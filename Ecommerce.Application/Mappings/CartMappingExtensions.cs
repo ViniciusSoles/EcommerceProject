@@ -19,8 +19,8 @@ public static class CartMappingExtensions
             ProductName = item.Product?.Name ?? string.Empty,
             ImageUrl = item.Product?.ImageUrl,
             Quantity = item.Quantity,
-            UnitPrice = item.Product?.
-            Subtotal = item.GetSubtotal().PriceAmount ?? 0,
+            UnitPrice = item.Product.Price.Amount,
+            Subtotal = item.GetSubtotal().Amount
         };
     }
 

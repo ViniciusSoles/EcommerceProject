@@ -1,4 +1,6 @@
+using Ecommerce.Infrastructure.Repositories;
 using ECommerceApi.Application.Interfaces;
+using ECommerceApi.Application.Services;
 using ECommerceApi.Domain.Interfaces;
 using ECommerceApi.Infrastructure.Data;
 using ECommerceApi.Infrastructure.Repositories;
@@ -9,6 +11,9 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using Serilog;
 using System.Text;
+using ECommerceApi.Application.Services;
+using ECommerceApi.API.Middlewares;
+
 
 Log.Logger = new LoggerConfiguration()
     .ReadFrom.Configuration(new ConfigurationBuilder()
@@ -43,21 +48,15 @@ builder.Services.AddSwaggerGen(options =>
         Description = "Digite: Bearer {seu token}"
     });
 
-    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    options.AddSecurityRequirement(document =>
+    new OpenApiSecurityRequirement
     {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id   = "Bearer"
-                }
-            },
-            Array.Empty<string>()
-        }
+        [new OpenApiSecuritySchemeReference("Bearer", document)] = []
     });
+
 });
+
+
 
 // Database
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -73,9 +72,9 @@ builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
 
 // Services
-builder.Services.AddScoped<AuthService, AuthService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
-builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IProductService,ProductService>();
 builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();

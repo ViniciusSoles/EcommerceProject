@@ -21,7 +21,7 @@ public class Review
     public Review(Guid userId, Guid productId, Rating rating, string? comment = null)
     {
         if (comment?.Length > 500)
-            throw new ArgumentException("Comment cannot exceed 500 characters.");
+            throw new ArgumentException("Comentário excedeu o limite 500 caracteres.");
 
         Id = Guid.NewGuid();
         UserId = userId;
@@ -34,7 +34,7 @@ public class Review
     public void Update(Rating rating, string? comment)
     {
         if (comment?.Length > 500)
-            throw new ArgumentException("Comment cannot exceed 500 characters.");
+            throw new ArgumentException("Comentário excedeu o limite de 500 caracteres");
 
         Rating = rating;
         Comment = comment;

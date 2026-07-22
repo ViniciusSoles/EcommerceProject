@@ -26,9 +26,9 @@ public class OrderItem
     public OrderItem(Guid orderId, Guid productId, string productName, int quantity, Money unitPrice)
     {
         if (quantity <= 0)
-            throw new ArgumentException("Quantity must be positive.");
+            throw new ArgumentException("A quantidade deve ser positiva.");
         if (string.IsNullOrWhiteSpace(productName))
-            throw new ArgumentException("Product name cannot be empty.");
+            throw new ArgumentException("Nome do produto não pode ser vazio.");
 
         Id = Guid.NewGuid();
         OrderId = orderId;

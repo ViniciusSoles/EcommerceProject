@@ -38,7 +38,7 @@ public class Payment
     public void Approve(string transactionId)
     {
         if (Status != PaymentStatus.Pending)
-            throw new InvalidPaymentStatusException("approve",Status.ToString());
+            throw new InvalidPaymentStatusException("approvado",Status.ToString());
 
         Status = PaymentStatus.Approved;
         TransactionId = transactionId;

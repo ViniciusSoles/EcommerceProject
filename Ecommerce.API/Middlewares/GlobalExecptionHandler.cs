@@ -1,8 +1,9 @@
 ﻿using ECommerceApi.Domain.Exceptions;
+using EcommerceProject;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Ecommerce.API.Middlewares;
+namespace ECommerceApi.API.Middlewares;
 
 public class GlobalExceptionHandler : IExceptionHandler
 {
@@ -18,11 +19,12 @@ public class GlobalExceptionHandler : IExceptionHandler
         Exception exception,
         CancellationToken cancellationToken)
     {
-        _logger.LogError(exception, "An unhandled exception occurred: {Message}", exception.Message);
-
         var problemDetails = MapException(exception, httpContext);
 
-        httpContext.Response.StatusCode = problemDetails.Status ?? StatusCodes.Status500InternalServerError;
+        LogException(exception, problemDetails, httpContext);
+
+        httpContext.Response.StatusCode = problemDetails.Status
+            ?? StatusCodes.Status500InternalServerError;
 
         await httpContext.Response.WriteAsJsonAsync(problemDetails, cancellationToken);
 
@@ -33,60 +35,121 @@ public class GlobalExceptionHandler : IExceptionHandler
     {
         return exception switch
         {
-            // ↓ NOVO — captura qualquer subclasse de DomainException
-            DomainException => new ProblemDetails
+            
+            InsufficientStockException domainEx => new ProblemDetails
             {
-                Title    = "Business rule violation.",
-                Detail   = exception.Message,
-                Status   = StatusCodes.Status400BadRequest,
-                Instance = httpContext.Request.Path
+                Title = "Stock unavailable.",
+                Detail = "One or more items are not available in the requested quantity.",
+                Status = StatusCodes.Status400BadRequest,
+                Instance = httpContext.Request.Path,
+                Extensions =
+                {
+                    ["errorCode"] = domainEx.ErrorCode
+                }
             },
 
-            ArgumentException => new ProblemDetails
+            InvalidOrderStatusTransitionException domainEx => new ProblemDetails
             {
-                Title    = "Invalid argument.",
-                Detail   = exception.Message,
-                Status   = StatusCodes.Status400BadRequest,
-                Instance = httpContext.Request.Path
+                Title = "Invalid order operation.",
+                Detail = "This order cannot be updated to the requested status.",
+                Status = StatusCodes.Status409Conflict,
+                Instance = httpContext.Request.Path,
+                Extensions =
+                {
+                    ["errorCode"] = domainEx.ErrorCode
+                }
+
             },
 
-            InvalidOperationException => new ProblemDetails
+            CannotCancelShippedOrderException domainEx => new ProblemDetails
             {
-                Title    = "Invalid operation.",
-                Detail   = exception.Message,
-                Status   = StatusCodes.Status409Conflict,
-                Instance = httpContext.Request.Path
+                Title = "Order cannot be cancelled.",
+                Detail = "Orders that have already been shipped or delivered cannot be cancelled.",
+                Status = StatusCodes.Status409Conflict,
+                Instance = httpContext.Request.Path,
+                Extensions =
+                {
+                    ["errorCode"] = domainEx.ErrorCode
+                }
+
             },
 
-            KeyNotFoundException => new ProblemDetails
+            InvalidPaymentStatusException domainEx => new ProblemDetails
             {
-                Title    = "Resource not found.",
-                Detail   = exception.Message,
-                Status   = StatusCodes.Status404NotFound,
-                Instance = httpContext.Request.Path
+                Title = "Invalid payment operation.",
+                Detail = "This payment operation is not allowed in the current status.",
+                Status = StatusCodes.Status409Conflict,
+                Instance = httpContext.Request.Path,
+                Extensions =
+                {
+                    ["errorCode"] = domainEx.ErrorCode
+                }
+
             },
 
-            UnauthorizedAccessException => new ProblemDetails
+            DomainException domainEx => new ProblemDetails
             {
-                Title    = "Unauthorized access.",
-                Detail   = exception.Message,
-                Status   = StatusCodes.Status401Unauthorized,
+                Title = "Business rule violation.",
+                Detail = "The requested operation violates a business rule.",
+                Status = StatusCodes.Status400BadRequest,
                 Instance = httpContext.Request.Path
+               
             },
+            
+
+            ArgumentException argEx => new ProblemDetails
+            {
+                Title = "Invalid argument.",
+                Detail = argEx.Message,
+                Status = StatusCodes.Status400BadRequest,
+                Instance = httpContext.Request.Path,
+
+            },  
 
             _ => new ProblemDetails
             {
-                Title    = "An unexpected error occurred.",
-                Detail   = "Please try again later or contact support.",
-                Status   = StatusCodes.Status500InternalServerError,
-                Instance = httpContext.Request.Path
+                Title = "An unexpected error occurred.",
+                Detail = "Please try again later or contact support.",
+                Status = StatusCodes.Status500InternalServerError,
+                Instance = httpContext.Request.Path,
+                Extensions =
+                {
+                    ["traceId"] = httpContext.TraceIdentifier
+                   
+                }
             }
         };
     }
+
+    private void LogException(
+        Exception exception,
+        ProblemDetails problemDetails,
+        HttpContext httpContext)
+    {
+
+
+        if (exception is DomainException)
+        {
+            _logger.LogWarning(
+                "Domain exception {ExceptionType} on {Method} {Path}: {Message}",
+                exception.GetType().Name,
+                httpContext.Request.Method,
+                httpContext.Request.Path,
+                exception.Message);
+
+            return;
+        }
+
+       
+        var traceId = problemDetails.Extensions.TryGetValue("traceId", out var trace)
+            ? trace?.ToString()
+            : httpContext.TraceIdentifier;
+
+        _logger.LogError(exception,
+            "[[{TraceId}] Unhandled exception on {Method} {Path}: {Message}",
+            traceId,
+            httpContext.Request.Method,
+            httpContext.Request.Path,
+            exception.Message);
+    }
 }
-
-
-
-
-
-

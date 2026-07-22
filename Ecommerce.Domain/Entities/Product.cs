@@ -21,8 +21,6 @@ namespace Ecommerce.Domain.Entities
         public bool IsActive { get; private set; }
         public Guid CategoryId { get; private set; }
         public DateTime CreatedAt { get; private set; }
-
-        // nav propsq  ........................................................................................................................................................................
         public Category Category { get; private set; }
         public ICollection<Review> Reviews { get; private set; } = new List<Review>();
         public ICollection<OrderItem> OrderItems { get; private set; } = new List<OrderItem>();
@@ -39,11 +37,11 @@ namespace Ecommerce.Domain.Entities
             string? imageUrl = null)
         {
             if (string.IsNullOrWhiteSpace(name))
-                throw new ArgumentException("Name cannot be empty.");
+                throw new ArgumentException("Name não pode ser vazio.");
             if (string.IsNullOrWhiteSpace(description))
-                throw new ArgumentException("Description cannot be empty.");
+                throw new ArgumentException("Descrição não pode ser vazia.");
             if (stock < 0)
-                throw new ArgumentException("Stock cannot be negative.");
+                throw new ArgumentException("Estoque não pode ser negativo.");
 
             Id = Guid.NewGuid();
             Name = name;
@@ -64,9 +62,9 @@ namespace Ecommerce.Domain.Entities
             Guid categoryId)
         {
             if (string.IsNullOrWhiteSpace(name))
-                throw new ArgumentException("Name cannot be empty.");
+                throw new ArgumentException("Name não pode ser vazio.");
             if (string.IsNullOrWhiteSpace(description))
-                throw new ArgumentException("Description cannot be empty.");
+                throw new ArgumentException("Descrição não pode ser vazia.");
 
             Name = name;
             Description = description;
@@ -78,14 +76,14 @@ namespace Ecommerce.Domain.Entities
         public void AddStock(int quantity)
         {
             if (quantity <= 0)
-                throw new ArgumentException("Quantity must be positive.");
+                throw new ArgumentException("Quantidade deve ser positiva.");
             Stock += quantity;
         }
 
         public void RemoveStock(int quantity)
         {
             if (quantity <= 0)
-                throw new ArgumentException("Quantity must be positive.");
+                throw new ArgumentException("Quantidade deve ser positiva.");
             if (quantity > Stock)
                 throw new InsufficientStockException(Name,Stock,quantity);
             Stock -= quantity;

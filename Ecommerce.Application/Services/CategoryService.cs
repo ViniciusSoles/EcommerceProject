@@ -33,7 +33,7 @@ public class CategoryService : ICategoryService
         var category = await _repository.GetByIdAsync(id);
 
         if (category is null)
-            return Result.Fail($"Category with id {id} not found.");
+            return Result.Fail("Categoria não encontrada.");
 
         return Result.Ok(category.ToDto());
     }
@@ -41,7 +41,7 @@ public class CategoryService : ICategoryService
     public async Task<Result<CategoryResponseDto>> CreateAsync(CreateCategoryDto dto)
     {
         if (await _repository.NameExistsAsync(dto.Name))
-            return Result.Fail("A category with this name already exists.");
+            return Result.Fail("Uma categoria com este nome já existe.");
 
         Category category;
         try

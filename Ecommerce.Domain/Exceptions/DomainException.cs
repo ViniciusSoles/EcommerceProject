@@ -1,6 +1,17 @@
+using System.Numerics;
+
 namespace ECommerceApi.Domain.Exceptions;
 
 public abstract class DomainException : Exception
 {
-    protected DomainException(string message) : base(message) { }
+
+    public string ErrorCode { get; }    
+    protected DomainException(
+        string message,
+        string errorCode) 
+        : base(message)   
+    { 
+        ErrorCode = errorCode;   
+    }
+
 }

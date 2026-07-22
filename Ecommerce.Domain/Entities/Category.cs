@@ -22,7 +22,7 @@ namespace Ecommerce.Domain.Entities
         public Category(string name, string? description = null)
         {
             if (string.IsNullOrWhiteSpace(name))
-                throw new ArgumentException("Name cannot be empty.");
+                throw new ArgumentException("Nome não pode ser vazio.");
 
             Id = Guid.NewGuid();
             Name = name;
@@ -33,7 +33,7 @@ namespace Ecommerce.Domain.Entities
         public void Update(string name, string? description)
         {
             if (string.IsNullOrWhiteSpace(name))
-                throw new ArgumentException("Name cannot be empty.");
+                throw new ArgumentException("Nome não pode ser vazio.");
 
             Name = name;
             Description = description;

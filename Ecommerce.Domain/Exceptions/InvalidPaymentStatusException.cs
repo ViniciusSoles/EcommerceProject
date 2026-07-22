@@ -7,6 +7,6 @@ public class InvalidPaymentStatusException : DomainException
     public InvalidPaymentStatusException(string action, string currentStatus)
 
 
-     : base($"Não é possível realizar '{action}' com o status '{currentStatus} atual."){}
+     : base($"Não é possível realizar '{action}' com o status '{currentStatus} atual.", "INVALID_PAYMENT_STATUS"){}
     
 }

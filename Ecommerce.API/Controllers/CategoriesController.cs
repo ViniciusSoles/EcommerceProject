@@ -32,7 +32,7 @@ public class CategoriesController : ControllerBase
         if (result.IsFailed)
             return NotFound(new ProblemDetails
             {
-                Title = "Category not found.",
+                Title = "Category não encontrada.",
                 Detail = result.Errors.First().Message,
                 Status = StatusCodes.Status404NotFound
             });
@@ -49,7 +49,7 @@ public class CategoriesController : ControllerBase
         if (result.IsFailed)
             return BadRequest(new ProblemDetails
             {
-                Title = "Failed to create category.",
+                Title = "Falha ao criar categoria.",
                 Detail = result.Errors.First().Message,
                 Status = StatusCodes.Status400BadRequest
             });

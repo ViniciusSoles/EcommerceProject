@@ -34,13 +34,13 @@ public class CartService : ICartService
         var product = await _productRepository.GetByIdAsync(dto.ProductId);
 
         if (product is null)
-            return Result.Fail("Product not found.");
+            return Result.Fail("O produto não foi encontrado.");
 
         if (!product.IsActive)
-            return Result.Fail("Product is not available.");
+            return Result.Fail("O produto não está disponível.");
 
         if (product.Stock < dto.Quantity)
-            return Result.Fail("Insufficient stock.");
+            return Result.Fail("Estoque insuficiente.");
 
         var cart = await GetOrCreateCartAsync(userId);
 
@@ -58,15 +58,15 @@ public class CartService : ICartService
         var cart = await _cartRepository.GetByUserIdAsync(userId);
 
         if (cart is null)
-            return Result.Fail("Cart not found.");
+            return Result.Fail("Carrinho não encontrado.");
 
         var item = cart.Items.FirstOrDefault(i => i.Id == cartItemId);
 
         if (item is null)
-            return Result.Fail("Item not found in cart.");
+            return Result.Fail("Item não encontrado no carrinho.");
 
         if (item.Product.Stock < dto.Quantity)
-            return Result.Fail("Insufficient stock.");
+            return Result.Fail("Estoque insuficiente.");
 
         try
         {
@@ -87,7 +87,7 @@ public class CartService : ICartService
         var cart = await _cartRepository.GetByUserIdAsync(userId);
 
         if (cart is null)
-            return Result.Fail("Cart not found.");
+            return Result.Fail("Carrinho não encontrado.");
 
         try
         {
