@@ -41,13 +41,16 @@ public class OrderService : IOrderService
         var cart = await _cartRepository.GetByUserIdAsync(userId);
 
         if (cart is null || !cart.Items.Any())
-            return Result.Fail("Cart is empty.");
+            return Result.Fail(
+                new Error("O carrinho está vazio.").WithMetadata("ErrorCode", "CART_IS_EMPTY"));
+
 
         // valida estoque de todos os itens antes de criar o pedido
         foreach (var cartItem in cart.Items)
         {
             if (cartItem.Product.Stock < cartItem.Quantity)
-                return Result.Fail($"Insufficient stock for {cartItem.Product.Name}.");
+                return Result.Fail(
+                new Error("Estoque insuficiente para o produto {cartItem.Product.Name}.").WithMetadata("ErrorCode", "INSUFFICIENT_STOCK"));
         }
 
         Address address;
@@ -57,11 +60,12 @@ public class OrderService : IOrderService
         }
         catch (ArgumentException ex)
         {
-            return Result.Fail(ex.Message);
+            return Result.Fail(
+                new Error(ex.Message).WithMetadata("ErrorCode", "INVALID_ADDRESS"));
         }
 
         var orderItems = cart.Items.Select(ci => new OrderItem(
-            Guid.Empty, // setado depois do Order existir
+            Guid.Empty, 
             ci.ProductId,
             ci.Product.Name,
             ci.Quantity,
@@ -70,8 +74,6 @@ public class OrderService : IOrderService
         var order = new Order(userId,address,orderItems);
         
 
-
-        // dá baixa no estoque
         foreach (var cartItem in cart.Items)
         {
             cartItem.Product.RemoveStock(cartItem.Quantity);
@@ -80,7 +82,6 @@ public class OrderService : IOrderService
 
         await _orderRepository.AddAsync(order);
 
-        // limpa o carrinho após criar o pedido
         cart.Clear();
         await _cartRepository.UpdateAsync(cart);
 
@@ -92,10 +93,12 @@ public class OrderService : IOrderService
         var order = await _orderRepository.GetByIdAsync(id);
 
         if (order is null)
-            return Result.Fail("Order not found.");
+            return Result.Fail(
+                new Error("Order not found.").WithMetadata("ErrorCode", "ORDER_NOT_FOUND"));
 
         if (!isAdmin && order.UserId != userId)
-            return Result.Fail("You don't have permission to view this order.");
+            return Result.Fail(
+                new Error("You don't have permission to view this order.").WithMetadata("ErrorCode", "PERMISSION_DENIED"));
 
         return Result.Ok(order.ToDto());
     }
@@ -138,7 +141,8 @@ public class OrderService : IOrderService
         var order = await _orderRepository.GetByIdAsync(id);
 
         if (order is null)
-            return Result.Fail("Order not found.");
+            return Result.Fail(
+                new Error("Order not found.").WithMetadata("ErrorCode", "ORDER_NOT_FOUND"));
 
             order.UpdateStatus(newStatus);
 

@@ -30,10 +30,10 @@ public class PaymentService : IPaymentService
         var order = await _orderRepository.GetByIdAsync(orderId);
 
         if (order is null)
-            return Result.Fail("Order not found.");
+            return Result.Fail(new Error("Order not found.").WithMetadata("ErrorCode", "ORDER_NOT_FOUND"));
 
         if (order.Status != OrderStatus.Pending)
-            return Result.Fail("Order is not pending payment.");
+            return Result.Fail(new Error("Order is not pending payment.").WithMetadata("ErrorCode", "ORDER_NOT_PENDING"));
 
         var payment = new Payment(orderId, order.Total, dto.Method);
 

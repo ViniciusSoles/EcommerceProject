@@ -50,7 +50,8 @@ public class ProductService : IProductService
         var product = await _repository.GetByIdWithReviewsAsync(id);
 
         if (product is null)
-            return Result.Fail($"Product with id {id} not found.");
+            return Result.Fail(
+                new Error("Product not found.").WithMetadata("ErrorCode", "PRODUCT_NOT_FOUND"));
 
         return Result.Ok(product.ToDto());
     }
@@ -60,7 +61,8 @@ public class ProductService : IProductService
         var category = await _categoryRepository.GetByIdAsync(dto.CategoryId);
 
         if (category is null)
-            return Result.Fail("Category not found.");
+            return Result.Fail(
+                new Error("Category not found.").WithMetadata("ErrorCode", "CATEGORY_NOT_FOUND"));
 
         Product product;
         try
@@ -70,7 +72,8 @@ public class ProductService : IProductService
         }
         catch (ArgumentException ex)
         {
-            return Result.Fail(ex.Message);
+            return Result.Fail(
+                new Error(ex.Message).WithMetadata("ErrorCode", "INVALID_PRODUCT"));
         }
 
         await _repository.AddAsync(product);
@@ -83,12 +86,14 @@ public class ProductService : IProductService
         var product = await _repository.GetByIdAsync(id);
 
         if (product is null)
-            return Result.Fail($"Product with id {id} not found.");
+            return Result.Fail(
+                new Error("Product not found.").WithMetadata("ErrorCode", "PRODUCT_NOT_FOUND"));
 
         var category = await _categoryRepository.GetByIdAsync(dto.CategoryId);
 
         if (category is null)
-            return Result.Fail("Category not found.");
+            return Result.Fail(
+                new Error("Category not found.").WithMetadata("ErrorCode", "CATEGORY_NOT_FOUND"));
 
         try
         {
@@ -97,7 +102,8 @@ public class ProductService : IProductService
         }
         catch (ArgumentException ex)
         {
-            return Result.Fail(ex.Message);
+            return Result.Fail(
+                new Error(ex.Message).WithMetadata("ErrorCode", "INVALID_PRODUCT"));
         }
 
         await _repository.UpdateAsync(product);
@@ -110,7 +116,8 @@ public class ProductService : IProductService
         var product = await _repository.GetByIdAsync(id);
 
         if (product is null)
-            return Result.Fail($"Product with id {id} not found.");
+            return Result.Fail(
+                new Error("Product not found.").WithMetadata("ErrorCode", "PRODUCT_NOT_FOUND"));
 
         await _repository.DeleteAsync(product);
 
@@ -122,7 +129,8 @@ public class ProductService : IProductService
         var product = await _repository.GetByIdAsync(id);
 
         if (product is null)
-            return Result.Fail($"Product with id {id} not found.");
+            return Result.Fail(
+                new Error("Product not found.").WithMetadata("ErrorCode", "PRODUCT_NOT_FOUND"));
 
         product.Deactivate();
         await _repository.UpdateAsync(product);
@@ -135,7 +143,8 @@ public class ProductService : IProductService
         var product = await _repository.GetByIdAsync(id);
 
         if (product is null)
-            return Result.Fail($"Product with id {id} not found.");
+            return Result.Fail(
+                new Error("Product not found.").WithMetadata("ErrorCode", "PRODUCT_NOT_FOUND"));
 
         product.Activate();
         await _repository.UpdateAsync(product);

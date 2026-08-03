@@ -33,7 +33,8 @@ public class CategoryService : ICategoryService
         var category = await _repository.GetByIdAsync(id);
 
         if (category is null)
-            return Result.Fail("Categoria não encontrada.");
+            return Result.Fail(
+                new Error("Categoria não encontrada.").WithMetadata("ErrorCode", "CATEGORY_NOT_FOUND"));
 
         return Result.Ok(category.ToDto());
     }
@@ -41,7 +42,8 @@ public class CategoryService : ICategoryService
     public async Task<Result<CategoryResponseDto>> CreateAsync(CreateCategoryDto dto)
     {
         if (await _repository.NameExistsAsync(dto.Name))
-            return Result.Fail("Uma categoria com este nome já existe.");
+            return Result.Fail(
+                new Error("Uma categoria com este nome já existe.").WithMetadata("ErrorCode", "CATEGORY_ALREADY_EXISTS"));
 
         Category category;
         try
@@ -50,7 +52,8 @@ public class CategoryService : ICategoryService
         }
         catch (ArgumentException ex)
         {
-            return Result.Fail(ex.Message);
+            return Result.Fail(
+                new Error(ex.Message).WithMetadata("ErrorCode", "INVALID_CATEGORY"));
         }
 
         await _repository.AddAsync(category);
@@ -63,7 +66,8 @@ public class CategoryService : ICategoryService
         var category = await _repository.GetByIdAsync(id);
 
         if (category is null)
-            return Result.Fail($"Category with id {id} not found.");
+            return Result.Fail(
+                new Error($"Category with id {id} not found.").WithMetadata("ErrorCode", "CATEGORY_NOT_FOUND"));
 
         try
         {
@@ -71,7 +75,8 @@ public class CategoryService : ICategoryService
         }
         catch (ArgumentException ex)
         {
-            return Result.Fail(ex.Message);
+            return Result.Fail(
+                new Error(ex.Message).WithMetadata("ErrorCode", "INVALID_CATEGORY"));
         }
 
         await _repository.UpdateAsync(category);
@@ -84,10 +89,12 @@ public class CategoryService : ICategoryService
         var category = await _repository.GetByIdAsync(id);
 
         if (category is null)
-            return Result.Fail($"Category with id {id} not found.");
+            return Result.Fail(
+                new Error($"Category with id {id} not found.").WithMetadata("ErrorCode", "CATEGORY_NOT_FOUND"));
 
         if (await _repository.HasProductsAsync(id))
-            return Result.Fail("Cannot delete a category that has products.");
+            return Result.Fail(
+                new Error("Cannot delete a category that has products.").WithMetadata("ErrorCode", "CATEGORY_HAS_PRODUCTS"));
 
         await _repository.DeleteAsync(category);
 

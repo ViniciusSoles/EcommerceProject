@@ -32,10 +32,12 @@ public class ReviewService : IReviewService
         Guid userId, Guid productId, CreateReviewDto dto)
     {
         if (!await _repository.UserHasPurchasedProductAsync(userId, productId))
-            return Result.Fail("You can only review products you have purchased.");
+            return Result.Fail(
+                new Error("You can only review products you have purchased.").WithMetadata("ErrorCode", "USER_NOT_PURCHASER"));
 
         if (await _repository.UserHasReviewedAsync(userId, productId))
-            return Result.Fail("You have already reviewed this product.");
+            return Result.Fail(
+                new Error("You have already reviewed this product.").WithMetadata("ErrorCode", "USER_ALREADY_REVIEWED"));
 
         Review review;
         try
@@ -45,7 +47,8 @@ public class ReviewService : IReviewService
         }
         catch (ArgumentException ex)
         {
-            return Result.Fail(ex.Message);
+            return Result.Fail(
+                new Error(ex.Message).WithMetadata("ErrorCode", "INVALID_REVIEW"));
         }
 
         await _repository.AddAsync(review);
@@ -58,10 +61,12 @@ public class ReviewService : IReviewService
         var review = await _repository.GetByIdAsync(reviewId);
 
         if (review is null)
-            return Result.Fail("Review not found.");
+            return Result.Fail(
+                new Error("Review not found.").WithMetadata("ErrorCode", "REVIEW_NOT_FOUND"));
 
         if (!isAdmin && review.UserId != userId)
-            return Result.Fail("You don't have permission to delete this review.");
+            return Result.Fail(
+                new Error("You don't have permission to delete this review.").WithMetadata("ErrorCode", "USER_NOT_ALLOWED"));
 
         await _repository.DeleteAsync(review);
 
