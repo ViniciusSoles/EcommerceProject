@@ -296,7 +296,7 @@ FluentValidation mantém as regras de validação centralizadas e testáveis, su
 
 ## Autor
 
-**Vinícius**
+**Vinícius Soles**
 Desenvolvedor Backend C# / .NET
 
 ---
