@@ -118,7 +118,7 @@ CannotCancelShippedOrderException       → 409
 InvalidPaymentStatusException           → 409
 ```
 
-Cada exception carrega um `ErrorId` curto (8 caracteres) para rastreabilidade no suporte sem expor detalhes internos.
+Cada exception carrega um `ErrorCode` para facilitar a identificação dos erros para o frontend.
 
 ---
 
