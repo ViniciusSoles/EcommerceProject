@@ -141,10 +141,10 @@ Todas as exceptions não tratadas são capturadas pelo `GlobalExceptionHandler` 
 | Tipo de Exception | Status HTTP | Resposta ao Cliente |
 |---|---|---|
 | `DomainException` (todas as subclasses) | 400 / 409 | Mensagem genérica de negócio + `errorId` |
-| `ArgumentException` | 400 | Mensagem + `errorId` |
-| `KeyNotFoundException` | 404 | Mensagem + `errorId` |
-| `UnauthorizedAccessException` | 401 | Mensagem + `errorId` |
-| Não tratada (`Exception`) | 500 | Mensagem genérica + `errorId` + `traceId` |
+| `ArgumentException` | 400 | Mensagem + `errorCode` |
+| `KeyNotFoundException` | 404 | Mensagem + `errorCode` |
+| `UnauthorizedAccessException` | 401 | Mensagem + `errorCode` |
+| Não tratada (`Exception`) | 500 | Mensagem genérica + `traceId` |
 
 O `traceId` é incluído apenas nas respostas 500 — conecta o erro aos logs de infraestrutura (Serilog) para investigação da engenharia sem expor detalhes internos aos clientes.
 
