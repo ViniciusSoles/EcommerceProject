@@ -140,7 +140,7 @@ Todas as exceptions não tratadas são capturadas pelo `GlobalExceptionHandler` 
 
 | Tipo de Exception | Status HTTP | Resposta ao Cliente |
 |---|---|---|
-| `DomainException` (todas as subclasses) | 400 / 409 | Mensagem genérica de negócio + `errorId` |
+| `DomainException` (todas as subclasses) | 400 / 409 | Mensagem genérica de negócio + `errorCode` |
 | `ArgumentException` | 400 | Mensagem + `errorCode` |
 | `KeyNotFoundException` | 404 | Mensagem + `errorCode` |
 | `UnauthorizedAccessException` | 401 | Mensagem + `errorCode` |
@@ -216,7 +216,7 @@ DELETE /api/reviews/{id}           [Authorize]
 
 ### Pré-requisitos
 
-- [.NET 9 SDK](https://dotnet.microsoft.com/download)
+- [.NET 10 SDK](https://dotnet.microsoft.com/download)
 - SQL Server ou SQL Server LocalDB
 - Visual Studio 2022 ou VS Code
 
@@ -282,9 +282,6 @@ Guids evitam expor o volume de negócio através de IDs sequenciais em URLs púb
 
 **Por que Result Pattern + Domain Exceptions (abordagem híbrida)?**
 `Result.Fail` trata fluxos de negócio esperados (não encontrado, validação). Domain Exceptions (subclasses de `DomainException`) protegem invariantes das entidades — regras que precisam ser verdadeiras sempre, independente de quem as chama. O `GlobalExceptionHandler` converte as domain exceptions em respostas HTTP adequadas, mantendo os controllers limpos.
-
-**Por que não ter UnitPrice no CartItem?**
-O carrinho representa uma intenção de compra ainda em andamento — os preços devem sempre refletir o catálogo atual. O congelamento de preço ocorre apenas na criação do pedido (`OrderItem.UnitPrice`), que é o único ponto correto de freeze.
 
 **Por que o Refresh Token é hasheado no banco?**
 Se o banco for comprometido, tokens em texto puro permitiriam que atacantes se passassem por usuários indefinidamente. O hash com SHA-256 torna tokens vazados inúteis sem o valor original.
