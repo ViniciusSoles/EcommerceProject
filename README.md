@@ -33,9 +33,9 @@ As dependências fluem para dentro — camadas externas dependem de camadas inte
 
 | Categoria | Tecnologia |
 |---|---|
-| Framework | ASP.NET Core 9 |
+| Framework | ASP.NET Core 10 |
 | Linguagem | C# 13 |
-| ORM | Entity Framework Core 9 |
+| ORM | Entity Framework Core 10 |
 | Banco de Dados | SQL Server (LocalDB) |
 | Autenticação | JWT Bearer + Refresh Token |
 | Logging | Serilog |
