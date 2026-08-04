@@ -1,6 +1,6 @@
 # ECommerce API
 
-API RESTful para uma plataforma de e-commerce desenvolvida com **ASP.NET Core 9** e **Clean Architecture**, criada como projeto de portfólio para demonstrar práticas de desenvolvimento backend de nível profissional.
+API RESTful para uma plataforma de e-commerce desenvolvida com **ASP.NET Core 10** e **Clean Architecture**, criada como projeto de portfólio para demonstrar práticas de desenvolvimento backend de nível profissional.
 
 ---
 
